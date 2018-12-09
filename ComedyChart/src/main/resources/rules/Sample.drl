@@ -1,0 +1,92 @@
+package com.sample
+ 
+import com.sample.DroolsTest.Message;
+import com.sample.DroolsTest.PytanieIOdpowiedz;
+import org.kie.api.runtime.KieRuntime
+import javax.swing.JOptionPane;
+import javax.swing.JFrame 
+
+        
+global JFrame frame 
+ 
+ 
+ 
+rule "setUp"
+	when
+	then
+    	insert( new PytanieIOdpowiedz("How do you feel about Turner Classic Movies?") );
+end 
+
+
+rule "pierwsze"
+	when
+        p : PytanieIOdpowiedz( p.getPytanie() == "How do you feel about Turner Classic Movies?", p.getOdpowiedz == "")	
+	then
+		String odp1 = "I love it so much that I witsh Robert Osborne was my grandpa.";
+		String odp2 = "What, am I wearing adult diapers? No TCM for me, thank you.";
+		showDialog(frame, kcontext.getKieRuntime(), p.getPytanie(), odp1, odp2, p);
+end
+
+rule "drugie"
+	when
+        p : PytanieIOdpowiedz( p.getPytanie() == "Silecne is...", p.getOdpowiedz == "")	
+	then
+		String odp1 = "golden.";
+		String odp2 = "great for naps.";
+		showDialog(frame, kcontext.getKieRuntime(), p.getPytanie(), odp1, odp2, p);
+end
+
+rule "trzecie"
+	when
+        p : PytanieIOdpowiedz( p.getPytanie() == "Which sounds like a better breakfast?", p.getOdpowiedz == "")	
+	then
+		String odp1 = "Beans on toast.";
+		String odp2 = "Biscuits and gravy.";
+		showDialog(frame, kcontext.getKieRuntime(), p.getPytanie(), odp1, odp2, p);
+end
+
+rule "odp1"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "I love it so much that I witsh Robert Osborne was my grandpa.")	
+	then
+        insert(new PytanieIOdpowiedz("Silecne is..."));
+
+end
+
+rule "odp2"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "What, am I wearing adult diapers? No TCM for me, thank you.")	
+	then
+        insert(new PytanieIOdpowiedz("Which sounds like a better breakfast?"));
+
+end
+
+
+
+
+
+
+function int showDialog(JFrame frame, KieRuntime krt, String pytanie, String odp1, String odp2, PytanieIOdpowiedz p) {
+		Object[] options = {odp1,
+                            odp2};
+        int n = JOptionPane.showOptionDialog(frame, pytanie,
+                                             "Pytanie",
+                                             JOptionPane.DEFAULT_OPTION,
+                                             JOptionPane.QUESTION_MESSAGE,
+                                             null,
+                                             options,
+                                             options[0]);                
+	
+		if(n == 0){
+			p.setOdpowiedz(odp1);
+		}
+		if(n == 1){
+			p.setOdpowiedz(odp2);
+		}
+		
+		krt.insert(new PytanieIOdpowiedz(p.getPytanie(), p.getOdpowiedz()));
+		
+		return n;
+}
+
+
