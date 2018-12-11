@@ -18,7 +18,7 @@ rule "setUp"
 end 
 
 
-rule "pierwsze"
+rule "p1"
 	when
         p : PytanieIOdpowiedz( p.getPytanie() == "How do you feel about Turner Classic Movies?", p.getOdpowiedz == "")	
 	then
@@ -27,7 +27,7 @@ rule "pierwsze"
 		showDialog(frame, kcontext.getKieRuntime(), p.getPytanie(), odp1, odp2, p);
 end
 
-rule "drugie"
+rule "p2"
 	when
         p : PytanieIOdpowiedz( p.getPytanie() == "Silecne is...", p.getOdpowiedz == "")	
 	then
@@ -36,7 +36,7 @@ rule "drugie"
 		showDialog(frame, kcontext.getKieRuntime(), p.getPytanie(), odp1, odp2, p);
 end
 
-rule "trzecie"
+rule "p3"
 	when
         p : PytanieIOdpowiedz( p.getPytanie() == "Which sounds like a better breakfast?", p.getOdpowiedz == "")	
 	then
@@ -45,7 +45,26 @@ rule "trzecie"
 		showDialog(frame, kcontext.getKieRuntime(), p.getPytanie(), odp1, odp2, p);
 end
 
-rule "odp1"
+rule "p4"
+	when
+        p : PytanieIOdpowiedz( p.getPytanie() == "When watching a comedy, I secretly...", p.getOdpowiedz == "")	
+	then
+		String odp1 = "hope they're painfully sweet.";
+		String odp2 = "wish I was watching a movie with a little more action.";
+		String odp3 = "cheers for the nerdiest characters.";
+		showDialog(frame, kcontext.getKieRuntime(), p.getPytanie(), odp1, odp2, odp3, p);
+end
+
+rule "p5"
+	when
+        p : PytanieIOdpowiedz( p.getPytanie() == "Do you consider yourself cerebral?", p.getOdpowiedz == "")	
+	then
+		String odp1 = "Brainy Smurf is my spirit animal.";
+		String odp2 = "I think you misspelled "cereal", but I'm not sure.";
+		showDialog(frame, kcontext.getKieRuntime(), p.getPytanie(), odp1, odp2, p);
+end
+
+rule "p1odp1"
 	when
         p : PytanieIOdpowiedz( p.getOdpowiedz() == "I love it so much that I witsh Robert Osborne was my grandpa.")	
 	then
@@ -53,7 +72,7 @@ rule "odp1"
 
 end
 
-rule "odp2"
+rule "p1odp2"
 	when
         p : PytanieIOdpowiedz( p.getOdpowiedz() == "What, am I wearing adult diapers? No TCM for me, thank you.")	
 	then
@@ -61,9 +80,77 @@ rule "odp2"
 
 end
 
+rule "p2odp1"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "golden.")	
+	then
+        insert(new PytanieIOdpowiedz("When watching a comedy, I secretly..."));
 
+end
 
+rule "p2odp2"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "great for naps.")	
+	then
+        insert(new PytanieIOdpowiedz("Do you consider yourself cerebral?"));
 
+end
+
+rule "p3odp1"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "Beans on toast.")	
+	then
+        insert(new PytanieIOdpowiedz("Do you think it'd be fun to shoot two guns whilst jumping through the air?"));
+
+end
+
+rule "p3odp2"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "Biscuits and gravy.")	
+	then
+        insert(new PytanieIOdpowiedz("How do you feel about sketch comedy?"));
+
+end
+
+rule "p4odp1"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "hope they're painfully sweet.")	
+	then
+        System.out.print("end");
+
+end
+
+rule "p4odp2"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "wish I was watching a movie with a little more action.")	
+	then
+        System.out.print("end");
+        
+end
+
+rule "p4odp3"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "cheers for the nerdiest characters.")	
+	then
+        System.out.print("end");
+        
+end
+
+rule "p5odp1"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "Brainy Smurf is my spirit animal.")	
+	then
+        insert(new PytanieIOdpowiedz("The biggest atrocity is..."));
+
+end
+
+rule "p5odp2"
+	when
+        p : PytanieIOdpowiedz( p.getOdpowiedz() == "I think you misspelled "cereal", but I'm not sure.")	
+	then
+        insert(new PytanieIOdpowiedz("I prefer my comic icons..."));
+
+end
 
 
 function int showDialog(JFrame frame, KieRuntime krt, String pytanie, String odp1, String odp2, PytanieIOdpowiedz p) {
@@ -83,6 +170,33 @@ function int showDialog(JFrame frame, KieRuntime krt, String pytanie, String odp
 		if(n == 1){
 			p.setOdpowiedz(odp2);
 		}
+		
+		krt.insert(new PytanieIOdpowiedz(p.getPytanie(), p.getOdpowiedz()));
+		
+		return n;
+}
+
+function int showDialog(JFrame frame, KieRuntime krt, String pytanie, String odp1, String odp2, String odp3, PytanieIOdpowiedz p) {
+		Object[] options = {odp1,
+                            odp2,
+                            odp3};
+        int n = JOptionPane.showOptionDialog(frame, pytanie,
+                                             "Pytanie",
+                                             JOptionPane.DEFAULT_OPTION,
+                                             JOptionPane.QUESTION_MESSAGE,
+                                             null,
+                                             options,
+                                             options[0]);                
+	
+		if(n == 0){
+			p.setOdpowiedz(odp1);
+		}
+		if(n == 1){
+			p.setOdpowiedz(odp2);
+		}
+		if(n == 2){
+			p.setOdpowiedz(odp3);
+		}		
 		
 		krt.insert(new PytanieIOdpowiedz(p.getPytanie(), p.getOdpowiedz()));
 		
