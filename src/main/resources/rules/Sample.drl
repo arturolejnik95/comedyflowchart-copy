@@ -1,0 +1,400 @@
+package com.sample
+
+import javax.swing.*;
+import org.kie.api.runtime.*;
+ 
+global JFrame frame; 
+global javax.swing.JTextArea textArea
+ 
+declare enum Question
+	TCM("How do you feel about Turner Classic Movies?",new String[]{"I love it so much that I wish Robert Osborne was my grandpa.","What am I wearing adult disapers? No TCM for me, thank you."}),
+	 SILENCE("Silence is...", new String[]{"golden.","great for naps"}),
+	SECRETLY("When watching a comedy, I secretly...", new String[]{"hope they're painfully sweet.","wish I was watching a movie with a little more action.","cheer for the nerdiest characters"}),	  
+	  CEREBRAL("Do you consider yourself cerebral?",new String[]{"Brainy Smurf is my spirit animal.","I think you misspelled 'cereal', but I'm not sure."}),
+	   ATROCITY("The biggest atrocity is...",new String[]{"war.","my own neuroses."}),
+	    OVERLAPPING("How do you feel about overlapping dialogue?",new String[]{"It's so realistic!","It's so annoying!"}),
+	    ISSUES("I have bigger issues with...", new String[]{"my job.", "my love life."}),
+	   ICONS("I prefer my comic icons...", new String[]{"female.","male."}),
+	    FEMALE_ICONS("And I also prefer my female comic icons...", new String[]{"fiery and strong-willed.","sweet and innocent."}),
+	     HAIR("Do you prefer redheads or blondes?", new String[]{"Redheads.", "Blondes."}),
+	      LEOPARDS("How do you feel about leopards?", new String[]{"Can't you offer anything human?", "There's a comedy with a leopard? Finally, someone is speaking to my demographic!"}),
+	    SECRET_SOCIETIES("Do you belong to any secret societies?", new String[]{"Shhh... that's supposed to be a secret!", "Nope."}),
+	     COWBOY_HATS("I find that the presence of cowboy hats...", new String[]{"greatly improves the work of Gene Wilder.", "greatly hinders the work of Gene Wilder.", "has nothing to do with comedy."}),
+	 SOUNDS("Which sounds like a better breakfast?", new String[]{"Beans on toast.", "Biscuits and gravy."}),
+	  JUMPING("Do you think it'd be fun to shoot two guns whilst jumping through the air?", new String[]{"Yeah! Bring the noise!", "I'd probably shoot myself on accident."}),
+	   FIGHT("Who would win in a fight?", new String[]{"Terry Gilliam.", "John Cleese."}),
+	  SKETCH("How do you feel about sketch comedy?", new String[]{"I could take it or leave it.", "It's a staple of my Saturday nights."}),
+	   STURGES("Does the name Preston Sturges mean anything to you?", new String[]{"Preston Sturges is amazing.", "Who the hell is that?"}),
+	    FUNNIER("Which is funnier?", new String[]{"Poop.", "Star Wars references.", "Pamela Anderson made to feel very uncomportable"}),
+	   FAT_PEOPLE("Are fat people naturally funny?", new String[]{"They're so jolly!", "Sweaty doesn't mean funny."}),
+	    MINNIE_THE_MOOCHER("Minnie the Moocher is...", new String[]{"a low-down hoochie coocher.", "a mouse or something."}),
+	    CHASE("Chevy Chase makes comedy...", new String[]{"much better.", "worse."}),
+		CHASE_PAIRED("Chevy Chase is best paired with...", new String[]{"a family.", "a psychotic groundskeeper at a country club."});
+	text: String
+    options : String[]
+end
+
+declare Answer
+	question: Question @key
+	choice: String
+end
+
+declare LastAnswer
+	text: String
+end
+
+
+
+//DECISION
+rule "set-up"
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.TCM, textArea);
+end
+
+rule "tcm-silence"
+when
+	Answer( question == Question.TCM, choice == "I love it so much that I wish Robert Osborne was my grandpa." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.SILENCE, textArea );
+end
+	
+rule "tcm-sounds"
+when
+	Answer( question == Question.TCM, choice == "What am I wearing adult disapers? No TCM for me, thank you." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.SOUNDS, textArea );
+end
+	
+rule "silence-secretly"
+when
+	Answer( question == Question.SILENCE, choice == "golden." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.SECRETLY, textArea );
+end
+	
+rule "silence-cerebral"
+when
+	Answer( question == Question.SILENCE, choice == "great for naps" )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.CEREBRAL, textArea );
+end
+
+rule "secretly-the kid"
+when
+	Answer( question == Question.SECRETLY, choice == "hope they're painfully sweet." )
+then
+	showResult(frame, "The Kid", textArea);
+end
+
+rule "secretly-the general"
+when
+	Answer( question == Question.SECRETLY, choice == "wish I was watching a movie with a little more action." )
+then
+	showResult(frame, "The General", textArea);
+end
+
+rule "secretly-safety last"
+when
+	Answer( question == Question.SECRETLY, choice == "cheer for the nerdiest characters" )
+then
+	showResult(frame, "Safety Last", textArea);
+end
+	
+rule "cerebral-atrocity"
+when
+	Answer( question == Question.CEREBRAL, choice == "Brainy Smurf is my spirit animal." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.ATROCITY, textArea );
+end
+
+rule "cerebral-icons"
+when
+	Answer( question == Question.CEREBRAL, choice == "I think you misspelled 'cereal', but I'm not sure." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.ICONS, textArea );
+end
+
+rule "atrocity-overlapping"
+when
+	Answer( question == Question.ATROCITY, choice == "war.")
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.OVERLAPPING, textArea );
+end
+
+rule "atrocity-issues"
+when
+	Answer( question == Question.ATROCITY, choice == "my own neuroses.")
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.ISSUES, textArea );
+end
+
+rule "overlapping-mash"
+when
+	Answer( question == Question.OVERLAPPING, choice == "It's so realistic!")
+then
+	showResult(frame, "MASH", textArea);
+end
+
+rule "overlapping-dr_strangelove"
+when
+	Answer( question == Question.OVERLAPPING, choice == "It's so annoying!")
+then
+	showResult(frame, "Dr. Strangelove", textArea);
+end
+
+rule "issues-lost_in_america"
+when
+	Answer( question == Question.ISSUES, choice == "my job." )
+then
+	showResult(frame, "Lost in America", textArea);
+end
+
+rule "issues-annie_hall"
+when
+	Answer( question == Question.ISSUES, choice == "my love life." )
+then
+	showResult(frame, "Annie Hall", textArea);
+end
+
+rule "icons-female_icons"
+when
+	Answer( question == Question.ICONS, choice == "female." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.FEMALE_ICONS, textArea );
+end
+
+rule "icons-secret_societies"
+when
+	Answer( question == Question.ICONS, choice == "male." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.SECRET_SOCIETIES, textArea );
+end
+
+rule "female_icons-hair"
+when
+	Answer( question == Question.FEMALE_ICONS, choice == "fiery and strong-willed." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.HAIR, textArea );
+end
+
+rule "female_icons-some_like_it_hot"
+when
+	Answer( question == Question.FEMALE_ICONS, choice == "sweet and innocent." )
+then
+	showResult(frame, "Some Like It Hot", textArea);
+end
+
+rule "hair-leopards"
+when
+	Answer( question == Question.HAIR, choice == "Redheads." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.LEOPARDS, textArea );
+end
+
+rule "hair-leopards2"
+when
+	Answer( question == Question.HAIR, choice == "Blondes." )
+then
+	showResult(frame, "Sullivan's Travels", textArea);
+end
+
+rule "leopards-adams_rib"
+when
+	Answer( question == Question.LEOPARDS, choice == "Can't you offer anything human?" )
+then
+	showResult(frame, "Adam's Rib", textArea);
+end
+
+rule "leopards-bringing_up_baby"
+when
+	Answer( question == Question.LEOPARDS, choice == "There's a comedy with a leopard? Finally, someone is speaking to my demographic!" )
+then
+	showResult(frame, "Bringing Up Baby", textArea);
+end
+
+rule "secret_societies-sons_of_the_desert"
+when
+	Answer( question == Question.SECRET_SOCIETIES, choice == "Shhh... that's supposed to be a secret!" )
+then
+	showResult(frame, "Sons of the Desert", textArea);
+end
+
+rule "secret_societies-cowboy_hats"
+when
+	Answer( question == Question.SECRET_SOCIETIES, choice == "Nope." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.COWBOY_HATS, textArea );
+end
+
+rule "cowboy_hats-blazing_saddles"
+when
+	Answer( question == Question.COWBOY_HATS, choice == "greatly improves the work of Gene Wilder." )
+then
+	showResult(frame, "Blazing Saddles", textArea);
+end
+
+rule "cowboy_hats-young_frankenstein"
+when
+	Answer( question == Question.COWBOY_HATS, choice == "greatly hinders the work of Gene Wilder." )
+then
+	showResult(frame, "Young Frankenstein", textArea);
+end
+
+rule "cowboy_hats-duck_soup"
+when
+	Answer( question == Question.COWBOY_HATS, choice == "has nothing to do with comedy." )
+then
+	showResult(frame, "Duck Soup", textArea);
+end
+	
+rule "sounds-jumping"
+when
+	Answer( question == Question.SOUNDS, choice == "Beans on toast." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.JUMPING, textArea );
+end
+	
+rule "sounds-sketch"
+when
+	Answer( question == Question.SOUNDS, choice == "Biscuits and gravy." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.SKETCH, textArea );
+end
+	
+rule "jumping-hot_fuzz"
+when
+	Answer( question == Question.JUMPING, choice == "Yeah! Bring the noise!" )
+then
+	showResult(frame, "Hot Fuzz", textArea);
+end
+	
+rule "jumping-fight"
+when
+	Answer( question == Question.JUMPING, choice == "I'd probably shoot myself on accident." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.FIGHT, textArea );
+end
+	
+rule "fight-monty_python"
+when
+	Answer( question == Question.FIGHT, choice == "Terry Gilliam." )
+then
+	showResult(frame, "Monty Python and the Holly Grail", textArea);
+end
+	
+rule "fight-fish_called_wanda"
+when
+	Answer( question == Question.FIGHT, choice == "John Cleese." )
+then
+	showResult(frame, "A Fish Called Wanda", textArea);
+end
+	
+rule "sketch-sturges"
+when
+	Answer( question == Question.SKETCH, choice == "I could take it or leave it." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.STURGES, textArea );
+end
+	
+rule "sketch-fat_people"
+when
+	Answer( question == Question.SKETCH, choice == "It's a staple of my Saturday nights." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.FAT_PEOPLE, textArea );
+end
+	
+rule "sturges-raising_arizona"
+when
+	Answer( question == Question.STURGES, choice == "Preston Sturges is amazing." )
+then
+	showResult(frame, "Raising Arizona", textArea);
+end
+	
+rule "sturges-funnier"
+when
+	Answer( question == Question.STURGES, choice == "Who the hell is that?" )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.FUNNIER, textArea );
+end
+	
+rule "funnier-dumb_and_dumber"
+when
+	Answer( question == Question.FUNNIER, choice == "Poop." )
+then
+	showResult(frame, "Dumb and Dumber", textArea);
+end
+	
+rule "funnier-clerks"
+when
+	Answer( question == Question.FUNNIER, choice == "Star Wars references." )
+then
+	showResult(frame, "Clerks", textArea);
+end
+	
+rule "funnier-borat"
+when
+	Answer( question == Question.FUNNIER, choice == "Pamela Anderson made to feel very uncomportable" )
+then
+	showResult(frame, "Borat", textArea);
+end
+	
+rule "fat_people-minnie_the_moocher"
+when
+	Answer( question == Question.FAT_PEOPLE, choice == "They're so jolly!" )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.MINNIE_THE_MOOCHER, textArea );
+end
+	
+rule "fat_people-chase"
+when
+	Answer( question == Question.FAT_PEOPLE, choice == "Sweaty doesn't mean funny." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.CHASE, textArea );
+end
+	
+rule "chase-paired"
+when
+	Answer( question == Question.CHASE, choice == "much better." )
+then
+	showDialog(frame, kcontext.getKieRuntime(), Question.CHASE_PAIRED, textArea );
+end
+	
+rule "chase-the_jerk"
+when
+	Answer( question == Question.CHASE, choice == "worse." )
+then
+	showResult(frame, "The Jerk", textArea);
+end
+
+rule "paired-vacation"
+when
+	Answer( question == Question.CHASE_PAIRED, choice == "a family." )
+then
+	showResult(frame, "Vacation", textArea);
+end
+
+rule "paired-caddyshack"
+when
+	Answer( question == Question.CHASE_PAIRED, choice == "a psychotic groundskeeper at a country club." )
+then
+	showResult(frame, "Caddyshack", textArea);
+end
+
+function void showDialog(JFrame frame, KieRuntime krt, Question q, JTextArea textArea) {
+		Object[] options = q.getOptions();
+        
+		int n = JOptionPane.showOptionDialog(frame, q.getText(), "", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, 1);  
+        
+		Answer a = new Answer(q);
+    	a.setChoice((String)options[n]);
+    	
+    	textArea.append("QUESTION: " + q.getText() + "\n");
+        textArea.append("\t CHOICE: " + options[n] + "\n");
+        
+		krt.insert(a);
+}
+	
+function void showResult(JFrame window, String comedy, JTextArea textArea) {
+    JOptionPane.showMessageDialog(window, comedy);
+    textArea.append("\n RESULT: " + comedy + "\n");
+}
